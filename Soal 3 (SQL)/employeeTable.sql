@@ -1,5 +1,5 @@
-CREATE DATABASE technicalTest;
-USE technicalTest; --to automatically using the database
+CREATE DATABASE techTest;
+USE techTest;
 
 CREATE TABLE Employee (
     Name VARCHAR(50),

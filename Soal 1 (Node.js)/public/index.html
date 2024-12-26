@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Form</title>
+    <style>
+        form, #submissions { max-width: 500px; margin: 20px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 8px; }
+        button { padding: 10px 20px; }
+        .submission { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <form id="contactForm">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" required></textarea>
+        </div>
+        <button type="submit">Submit</button>
+        <button type="button" onclick="fetchSubmissions()">View Submissions</button>
+    </form>
+
+    <div id="submissions"></div>
+
+    <script>
+        // Your existing form submission code
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(data)
+                });
+                
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert('Error submitting form');
+            }
+        });
+
+        // Add the submission display code
+        async function fetchSubmissions() {
+            try {
+                const response = await fetch('/api/submissions');
+                const data = await response.json();
+                displaySubmissions(data);
+            } catch (error) {
+                console.error('Error fetching submissions:', error);
+                document.getElementById('submissions').innerHTML = 'Error loading submissions';
+            }
+        }
+
+        function displaySubmissions(submissions) {
+            const container = document.getElementById('submissions');
+            
+            if (!submissions.length) {
+                container.innerHTML = 'No submissions found';
+                return;
+            }
+            
+            const html = submissions.map(sub => `
+                <div class="submission">
+                    <h3>${escapeHtml(sub.name)}</h3>
+                    <p>Email: ${escapeHtml(sub.email)}</p>
+                    <p>${escapeHtml(sub.message)}</p>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
