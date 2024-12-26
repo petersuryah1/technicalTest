@@ -1,0 +1,2 @@
+0 8,12,15 * * * python3 C:\Users\Daniel Ervin\Documents\Peter\Huawei\Soal 2 (CronJob)\collect.py # Collect Data Job
+@daily python3 C:\Users\Daniel Ervin\Documents\Peter\Huawei\Soal 2(CronJob)\hapus.py # Clean Old Files Job
